@@ -10,6 +10,7 @@ export type UserDataType = {
   email: string
   name: string
   password: string
+  image?: string
 }
 
 export type AuthValuesType = {

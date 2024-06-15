@@ -6,6 +6,13 @@ import './globals.css';
 import { store } from '../store';
 import { Provider } from 'react-redux';
 
+// ** Component Imports
+import Spinner from "../components/spinner";
+import AuthGuard from "../components/auth/AuthGuard";
+
+// ** Contexts
+import { AuthProvider } from "../context/AuthContext";
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -22,7 +29,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} ${inter.variable}`}>
         <Provider store={store}>
-          {children}
+          <AuthProvider >
+            <AuthGuard fallback={<Spinner />}>
+              {children}
+            </AuthGuard>
+          </AuthProvider>
         </Provider>
       </body>
     </html>
