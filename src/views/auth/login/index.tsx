@@ -43,8 +43,8 @@ const schema = yup.object().shape({
 })
 
 const defaultValues = {
-    password: 'admin',
-    email: 'admin@materialize.com'
+    password: '12345678',
+    email: 'rauchg@vercel.com'
 }
 
 interface FormData {
@@ -53,7 +53,6 @@ interface FormData {
 }
 
 const LoginForm = () => {
-    const [rememberMe, setRememberMe] = useState<boolean>(true)
     const [showPassword, setShowPassword] = useState<boolean>(false)
 
     // ** Hooks
@@ -141,10 +140,6 @@ const LoginForm = () => {
             <Box
                 sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-                <FormControlLabel
-                    label='Remember Me'
-                    control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
-                />
                 <Typography
                     variant='body2'
                     component={Link}

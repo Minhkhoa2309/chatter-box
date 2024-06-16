@@ -11,11 +11,42 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model users {
-  id        Int      @id @default(autoincrement())
+model User {
+  id        Int          @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String       @unique
+  avatar    String
   password  String
-  image     String
+  createdAt DateTime     @default(now())
+  messages  Message[]
+  rooms     RoomOnUser[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
   createdAt DateTime @default(now())
+  senderId  Int
+  sender    User     @relation(fields: [senderId], references: [id])
+  roomId    Int
+  room      Room     @relation(fields: [roomId], references: [id])
+}
+
+model Room {
+  id        Int          @id @default(autoincrement())
+  name      String
+  createdAt DateTime     @default(now())
+  messages  Message[]
+  users     RoomOnUser[]
+}
+
+model RoomOnUser {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  roomId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roomId])
 }

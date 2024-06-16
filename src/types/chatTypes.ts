@@ -3,6 +3,15 @@ import { Dispatch } from 'redux'
 
 export type StatusType = 'busy' | 'away' | 'online' | 'offline'
 
+export const statusObj = {
+  busy: 'error',
+  away: 'warning',
+  online: 'success',
+  offline: 'secondary'
+}
+
+
+
 export type MsgFeedbackType = {
   isSent: boolean
   isSeen: boolean
@@ -26,20 +35,16 @@ export type ChatsObj = {
 
 export type ContactType = {
   id: number
-  role: string
-  about: string
   avatar?: string
-  fullName: string
+  name: string
   status: StatusType
 }
 
 export type ChatsArrType = {
   id: number
-  role: string
-  about: string
   chat: ChatsObj
   avatar?: string
-  fullName: string
+  name: string
   status: StatusType
 }
 
@@ -58,5 +63,21 @@ export type SendMsgParamsType = {
   chat?: ChatsObj
   message: string
   contact?: ChatsArrType
+}
+
+export type ChatContentType = {
+  store: ChatStoreType
+  sidebarWidth: number
+  dispatch: Dispatch<any>
+}
+
+export type ChatSidebarLeftType = {
+  store: ChatStoreType
+  sidebarWidth: number
+  userStatus: StatusType
+  dispatch: Dispatch<any>
+  leftSidebarOpen: boolean
+  removeSelectedChat: () => void
+  handleLeftSidebarToggle: () => void
 }
 

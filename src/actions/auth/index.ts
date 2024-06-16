@@ -2,7 +2,7 @@
 
 // ** JWT import
 import jwt from 'jsonwebtoken'
-import prisma from "../../../lib/prisma";
+import prisma from "@/lib/prisma";
 import * as bcrypt from "bcrypt";
 
 // ! These two secrets should be in .env file and not in any other file
@@ -10,7 +10,6 @@ const jwtConfig = {
     accessTokenSecret: process.env.NEXT_PUBLIC_JWT_ACCESS_TOKEN_SECRET,
     refreshTokenSecret: process.env.NEXT_PUBLIC_JWT_REFRESH_TOKEN_SECRET
 }
-type ResponseType = [number, { [key: string]: any }]
 
 // compare with hashed password
 const comparePassword = async (
@@ -59,7 +58,7 @@ const generateRandomPassword = () => {
 export const login = async (loginData: any): Promise<any> => {
     return new Promise(async (resolve, reject) => {
         const { email, password } = loginData;
-        const user = await prisma.users.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 email,
             },
@@ -82,7 +81,7 @@ export const login = async (loginData: any): Promise<any> => {
 }
 
 export const registerUser = async (userData: any) => {
-    const isUserExist = await prisma.users.findUnique({
+    const isUserExist = await prisma.user.findUnique({
         where: {
             email: userData.email,
         },
@@ -96,12 +95,12 @@ export const registerUser = async (userData: any) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.users.create({
+    const user = await prisma.user.create({
         data: {
             name: userData.name,
             email: userData.email,
             password: hashedPassword,
-            image: userData.image,
+            avatar: userData.avatar,
             createdAt: new Date()
         },
     });
@@ -109,7 +108,7 @@ export const registerUser = async (userData: any) => {
     return user;
 };
 
-export const authMe = async (accessToken: string, refreshToken: string): Promise<ResponseType> => {
+export const authMe = async (accessToken: string, refreshToken: string): Promise<any> => {
     return new Promise((resolve, reject) => {
         jwt.verify(accessToken, jwtConfig.accessTokenSecret as string, async (err, decoded) => {
             if (err) {
@@ -124,14 +123,14 @@ export const authMe = async (accessToken: string, refreshToken: string): Promise
 
                         // @ts-ignore
                         const { id: userId } = refreshTokenDecoded.payload;
-                        const userData = await prisma.users.findUnique({
+                        const userData = await prisma.user.findUnique({
                             where: {
                                 id: userId,
                             },
                         });
 
                         if (!userData) {
-                            resolve([401, { error: { error: 'Invalid User' } }]);
+                            reject({ error: 'Invalid User' });
                         }
 
                         const newAccessToken = jwt.sign({ id: userId }, jwtConfig.accessTokenSecret as string, {
@@ -164,7 +163,7 @@ export const authMe = async (accessToken: string, refreshToken: string): Promise
                     resolve([401, { error: { error: 'Invalid User' } }]);
                 }
 
-                const user = await prisma.users.findUnique({
+                const user = await prisma.user.findUnique({
                     where: {
                         id: userId,
                     },
@@ -177,7 +176,7 @@ export const authMe = async (accessToken: string, refreshToken: string): Promise
                 const userData = JSON.parse(JSON.stringify(user));
                 delete userData.password;
 
-                resolve([200, { userData }]);
+                resolve({ userData });
             }
         });
     });

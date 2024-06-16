@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation'
 
 // ** Types
 import { AuthValuesType, LoginParams, ErrCallbackType, UserDataType } from './types'
-import { authMe, login } from '../actions/auth/jwt'
+import { authMe, login } from '../actions/auth'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
