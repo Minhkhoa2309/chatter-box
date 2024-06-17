@@ -14,7 +14,6 @@ import { AppDispatch, RootState } from '@/src/store'
 // ** Type
 import { StatusType } from '@/src/types/chatTypes'
 import { removeSelectedChat } from '@/src/store/chat'
-import { useAuth } from '@/src/hooks/useAuth'
 
 const ChatScreen = () => {
     // ** States
@@ -24,7 +23,6 @@ const ChatScreen = () => {
     const theme = useTheme();
     const dispatch = useDispatch<AppDispatch>()
     const store = useSelector((state: RootState) => state.chat)
-    const auth = useAuth();
 
     // ** Vars
     const sidebarWidth = 370
@@ -42,7 +40,8 @@ const ChatScreen = () => {
                 position: 'relative',
                 backgroundColor: 'background.paper',
                 boxShadow: 6,
-                border: `1px solid ${theme.palette.divider}`
+                border: `1px solid ${theme.palette.divider}`,
+                height: '100vh'
             }}
         >
             <SideBarLeft

@@ -21,7 +21,7 @@ const AuthGuard = (props: AuthGuardProps) => {
   useEffect(
     () => {
       if (auth.user === null && !window.localStorage.getItem('userData')) {
-          router.replace('/login')
+        router.replace('/login')
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -6,19 +6,8 @@ import React, { useState, MouseEvent } from 'react'
 import Link from 'next/link'
 
 // ** MUI Components
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Checkbox from '@mui/material/Checkbox'
-import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
-import Box from '@mui/material/Box'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
-import FormHelperText from '@mui/material/FormHelperText'
-import InputAdornment from '@mui/material/InputAdornment'
-import Typography from '@mui/material/Typography'
+import { CardContent, Typography, InputAdornment, FormHelperText, OutlinedInput, FormControl, Box, Card, IconButton, InputLabel, TextField, Checkbox, Divider, Button } from '@mui/material'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
 import Icon from '../../../components/icon'
 
@@ -54,6 +43,7 @@ interface FormData {
 
 const LoginForm = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
+    const [rememberMe, setRememberMe] = useState<boolean>(true)
 
     // ** Hooks
     const auth = useAuth()
@@ -71,7 +61,7 @@ const LoginForm = () => {
 
     const onSubmit = (data: FormData) => {
         const { email, password } = data
-        auth.login({ email, password}, () => {
+        auth.login({ email, password, rememberMe }, () => {
             setError('email', {
                 type: 'manual',
                 message: 'Email or Password is invalid'
@@ -80,128 +70,99 @@ const LoginForm = () => {
     }
 
     return (
-        <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
-            <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                    name='email'
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange, onBlur } }) => (
-                        <TextField
-                            autoFocus
-                            label='Email'
-                            value={value}
-                            onBlur={onBlur}
-                            onChange={onChange}
-                            error={Boolean(errors.email)}
-                            placeholder='admin@materialize.com'
+        <Card sx={{ zIndex: 1 }}>
+            <CardContent sx={{ p: theme => `${theme.spacing(13, 7, 6.5)} !important` }}>
+                <Box sx={{ mb: 6 }}>
+                    <Typography variant='h5' sx={{ mb: 1.5, fontWeight: 600, letterSpacing: '0.18px' }}>
+                        {`Welcome to ChatterBox! 👋🏻`}
+                    </Typography>
+                    <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+                </Box>
+                <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+                    <FormControl fullWidth sx={{ mb: 4 }}>
+                        <Controller
+                            name='email'
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field: { value, onChange, onBlur } }) => (
+                                <TextField
+                                    autoFocus
+                                    label='Email'
+                                    value={value}
+                                    onBlur={onBlur}
+                                    onChange={onChange}
+                                    error={Boolean(errors.email)}
+                                    placeholder='admin@materialize.com'
+                                />
+                            )}
                         />
-                    )}
-                />
-                {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
-                    Password
-                </InputLabel>
-                <Controller
-                    name='password'
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange, onBlur } }) => (
-                        <OutlinedInput
-                            value={value}
-                            onBlur={onBlur}
-                            label='Password'
-                            onChange={onChange}
-                            id='auth-login-v2-password'
-                            error={Boolean(errors.password)}
-                            type={showPassword ? 'text' : 'password'}
-                            endAdornment={
-                                <InputAdornment position='end'>
-                                    <IconButton
-                                        edge='end'
-                                        onMouseDown={e => e.preventDefault()}
-                                        onClick={() => setShowPassword(!showPassword)}
-                                    >
-                                        <Icon icon={showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} fontSize={20} />
-                                    </IconButton>
-                                </InputAdornment>
-                            }
+                        {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
+                    </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
+                            Password
+                        </InputLabel>
+                        <Controller
+                            name='password'
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field: { value, onChange, onBlur } }) => (
+                                <OutlinedInput
+                                    value={value}
+                                    onBlur={onBlur}
+                                    label='Password'
+                                    onChange={onChange}
+                                    id='auth-login-v2-password'
+                                    error={Boolean(errors.password)}
+                                    type={showPassword ? 'text' : 'password'}
+                                    endAdornment={
+                                        <InputAdornment position='end'>
+                                            <IconButton
+                                                edge='end'
+                                                onMouseDown={e => e.preventDefault()}
+                                                onClick={() => setShowPassword(!showPassword)}
+                                            >
+                                                <Icon icon={showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} fontSize={20} />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                />
+                            )}
                         />
-                    )}
-                />
-                {errors.password && (
-                    <FormHelperText sx={{ color: 'error.main' }} id=''>
-                        {errors.password.message}
-                    </FormHelperText>
-                )}
-            </FormControl>
-            <Box
-                sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
-            >
-                <Typography
-                    variant='body2'
-                    component={Link}
-                    href='/forgot-password'
-                    sx={{ color: 'primary.main', textDecoration: 'none' }}
-                >
-                    Forgot Password?
-                </Typography>
-            </Box>
-            <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
-                Login
-            </Button>
-            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Typography sx={{ mr: 2, color: 'text.secondary' }}>New on our platform?</Typography>
-                <Typography href='/register' component={Link} sx={{ color: 'primary.main', textDecoration: 'none' }}>
-                    Create an account
-                </Typography>
-            </Box>
-            <Divider
-                sx={{
-                    '& .MuiDivider-wrapper': { px: 4 },
-                    mt: theme => `${theme.spacing(5)} !important`,
-                    mb: theme => `${theme.spacing(7.5)} !important`
-                }}
-            >
-                or
-            </Divider>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconButton
-                    href='/'
-                    component={Link}
-                    sx={{ color: '#497ce2' }}
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                    <Icon icon='mdi:facebook' />
-                </IconButton>
-                <IconButton
-                    href='/'
-                    component={Link}
-                    sx={{ color: '#1da1f2' }}
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                    <Icon icon='mdi:twitter' />
-                </IconButton>
-                <IconButton
-                    href='/'
-                    component={Link}
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
-                >
-                    <Icon icon='mdi:github' />
-                </IconButton>
-                <IconButton
-                    href='/'
-                    component={Link}
-                    sx={{ color: '#db4437' }}
-                    onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                    <Icon icon='mdi:google' />
-                </IconButton>
-            </Box>
-        </form>
+                        {errors.password && (
+                            <FormHelperText sx={{ color: 'error.main' }} id=''>
+                                {errors.password.message}
+                            </FormHelperText>
+                        )}
+                    </FormControl>
+                    <Box
+                        sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
+                    >
+                        <FormControlLabel
+                            label='Remember Me'
+                            control={<Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />}
+                        />
+                        <Typography
+                            variant='body2'
+                            component={Link}
+                            href='/forgot-password'
+                            sx={{ color: 'primary.main', textDecoration: 'none' }}
+                        >
+                            Forgot Password?
+                        </Typography>
+                    </Box>
+                    <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
+                        Login
+                    </Button>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <Typography sx={{ mr: 2, color: 'text.secondary' }}>New on our platform?</Typography>
+                        <Typography href='/register' component={Link} sx={{ color: 'primary.main', textDecoration: 'none' }}>
+                            Create an account
+                        </Typography>
+                    </Box>
+                </form>
+            </CardContent>
+        </Card>
     )
 }
 

@@ -1,5 +1,15 @@
 // ** Redux Imports
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+
+// ** Axios Imports
+import axios from 'axios'
+
+// ** Fetch Chats & Contacts
+export const fetchRoom = createAsyncThunk('appChat/fetchRoom', async () => {
+  const response = await axios.get('/api/chat/rooms')
+
+  return response.data
+})
 
 export const appChatSlice = createSlice({
   name: 'appChat',

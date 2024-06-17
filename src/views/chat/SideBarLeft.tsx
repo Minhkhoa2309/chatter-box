@@ -11,6 +11,7 @@ import { ChatSidebarLeftType, ChatsArrType, ContactType, statusObj } from '@/src
 import Icon from '@/src/components/icon'
 import { useAuth } from '@/src/hooks/useAuth'
 import { formatDateToMonthShort, getInitials } from '@/lib/utils'
+import { fetchRoom } from '@/src/store/chat'
 
 
 const SideBarLeft = (props: ChatSidebarLeftType) => {
@@ -46,6 +47,7 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
   }, [store, active])
 
   useEffect(() => {
+    dispatch(fetchRoom())
 
     return () => {
       setActive(null)

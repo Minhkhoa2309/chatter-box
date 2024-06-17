@@ -1,5 +1,5 @@
 'use client'
-import Login from '../../views/auth/login'
+import Register from '@/src/views/auth/register'
 import { Box } from '@mui/material'
 
 const Page = () => {
@@ -12,7 +12,7 @@ const Page = () => {
             justifyContent: 'center',
             padding: theme => theme.spacing(5)
         }}>
-            <Login />
+            <Register />
         </Box>
     )
 }
