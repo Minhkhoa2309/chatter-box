@@ -1,35 +1,34 @@
-# Vercel Postgres + Prisma Next.js
+# ChatterBox
 
-Simple Next.js template that uses [Vercel Postgres](https://vercel.com/postgres) as the database and [Prisma](https://prisma.io/) as the ORM.
+## :beginner: Overview
 
-## Demo
+This is a chat app made with next.js, Material UI, prisma, and postgresql.
 
-https://chatter-box-ten.vercel.app
+[View demo](https://chatter-box-ten.vercel.app/)
 
-## How to Use
+## :camera:
 
-You can choose this method below to use this repository:
+![](./public/template.png)
 
-### Clone and Deploy
+## :zap: Usage
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [pnpm](https://pnpm.io/installation) to bootstrap the example:
+Users should be able to:
 
-```bash
-pnpm create next-app --example https://github.com/vercel/examples/tree/main/storage/postgres-prisma
-```
+- Sign in, register, logout 
+- See the list of chats, friends
+- Add Friend, create Group chat with friend
+- Start a conversation with another user
+- Send text messages to the conversation
 
-Once that's done, copy the .env.example file in this directory to .env.local (which will be ignored by Git):
+### :hammer: Built With
 
-```bash
-cp .env.example .env.local
-```
+- [NEXT JS](https://nextjs.org/)
+- [Material UI]([https://tanstack.com/](https://mui.com/material-ui/))
+- [Prisma](https://www.prisma.io/)
+- [Postgresql](https://www.postgresql.org/)
+- [Typescript](https://www.typescriptlang.org/)
+- [Nextauth](https://next-auth.js.org/)
 
-Then open `.env.local` and set the environment variables to match the ones in your Vercel Storage Dashboard.
+## :star2: Acknowledgment
 
-Next, run Next.js in development mode:
-
-```bash
-pnpm dev
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples) ([Documentation](https://nextjs.org/docs/deployment)).
+- [Vercel](https://vercel.com/)
