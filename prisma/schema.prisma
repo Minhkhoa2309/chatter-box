@@ -12,41 +12,49 @@ datasource db {
 }
 
 model User {
-  id        Int          @id @default(autoincrement())
-  name      String
-  email     String       @unique
-  avatar    String?
-  password  String
-  createdAt DateTime     @default(now())
-  messages  Message[]
-  rooms     RoomOnUser[]
+  id             Int          @id @default(autoincrement())
+  name           String
+  email          String       @unique
+  avatar         String?
+  password       String
+  chats          UserChat[]
+  friendshipsOne Friendship[] @relation("UserFriendshipsOne")
+  friendshipsTwo Friendship[] @relation("UserFriendshipsTwo")
+  createAt       DateTime     @default(now())
+}
+
+model Chat {
+  id          Int        @id @default(autoincrement())
+  isGroupChat Boolean
+  name        String?
+  users       UserChat[]
+  messages    Message[]
+}
+
+model UserChat {
+  userId Int
+  chatId Int
+  user   User @relation(fields: [userId], references: [id])
+  chat   Chat @relation(fields: [chatId], references: [id])
+
+  @@id([userId, chatId])
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  senderId  Int
-  sender    User     @relation(fields: [senderId], references: [id])
-  roomId    Int
-  room      Room     @relation(fields: [roomId], references: [id])
+  id       Int      @id @default(autoincrement())
+  chatId   Int
+  chat     Chat     @relation(fields: [chatId], references: [id])
+  senderId Int
+  time     DateTime @default(now())
+  message  String
 }
 
-model Room {
-  id        Int          @id @default(autoincrement())
-  name      String
-  createdAt DateTime     @default(now())
-  messages  Message[]
-  users     RoomOnUser[]
-}
+model Friendship {
+  id        Int  @id @default(autoincrement())
+  userOneId Int
+  userOne   User @relation("UserFriendshipsOne", fields: [userOneId], references: [id])
+  userTwoId Int
+  userTwo   User @relation("UserFriendshipsTwo", fields: [userTwoId], references: [id])
 
-model RoomOnUser {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  roomId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  room      Room     @relation(fields: [roomId], references: [id])
-  createdAt DateTime @default(now())
-
-  @@unique([userId, roomId])
+  @@unique([userOneId, userTwoId])
 }

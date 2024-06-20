@@ -1,10 +1,13 @@
 'use client'
 import React, { Fragment } from 'react'
-import { ChatContentType, statusObj } from '@/src/types/chatTypes'
+import { ChatContentType } from '@/src/types/chatTypes'
 import MuiAvatar from '@mui/material/Avatar'
 import { Avatar, Badge, Box, Typography, IconButton } from '@mui/material'
 import Icon from '@/src/components/icon'
 import { formatDateToMonthShort, getInitials } from '@/lib/utils'
+import { useAuth } from '@/src/hooks/useAuth'
+import ChatLog from './ChatLog'
+import SendMsgForm from './SendMsgForm'
 
 const ChatContent = (props: ChatContentType) => {
   // ** Props
@@ -14,10 +17,15 @@ const ChatContent = (props: ChatContentType) => {
     sidebarWidth
   } = props
 
+  // ** Hooks
+  const auth = useAuth()
+
 
   const renderContent = () => {
     if (store) {
       const selectedChat = store.selectedChat
+
+
       if (!selectedChat) {
         return (
           <Box
@@ -48,21 +56,10 @@ const ChatContent = (props: ChatContentType) => {
             >
               <Icon icon='mdi:message-outline' fontSize='3.125rem' />
             </MuiAvatar>
-            <Box
-              sx={{
-                px: 6,
-                py: 2.25,
-                boxShadow: 3,
-                borderRadius: 5,
-                backgroundColor: 'background.paper',
-                cursor: 'default'
-              }}
-            >
-              <Typography sx={{ fontWeight: 600 }}>Start Conversation</Typography>
-            </Box>
           </Box>
         )
       } else {
+        
         return (
           <Box
             sx={{
@@ -84,7 +81,6 @@ const ChatContent = (props: ChatContentType) => {
             >
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Box
-                  //onClick={handleUserProfileRightSidebarToggle}
                   sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
                 >
                   <Badge
@@ -94,34 +90,22 @@ const ChatContent = (props: ChatContentType) => {
                       horizontal: 'right'
                     }}
                     sx={{ mr: 4.5 }}
-                    badgeContent={
-                      <Box
-                        component='span'
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          color: `${statusObj[selectedChat.contact.status]}.main`,
-                          boxShadow: theme => `0 0 0 2px ${theme.palette.background.paper}`,
-                          backgroundColor: `${statusObj[selectedChat.contact.status]}.main`
-                        }}
-                      />
-                    }
                   >
-                    {selectedChat.contact.avatar ? (
+                    {selectedChat.friend.avatar ? (
                       <MuiAvatar
-                        src={selectedChat.contact.avatar}
-                        alt={selectedChat.contact.name}
+                        src={selectedChat.friend.avatar}
+                        alt={selectedChat.friend.name}
                         sx={{ width: 40, height: 40 }}
                       />
                     ) : (
                       <Avatar>
-                        {getInitials(selectedChat.contact.name)}
+                        {getInitials(selectedChat.friend.name)}
                       </Avatar>
                     )}
+
                   </Badge>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography sx={{ color: 'text.secondary' }}>{selectedChat.contact.name}</Typography>
+                    <Typography sx={{ color: 'text.secondary' }}>{selectedChat.friend.name}</Typography>
                   </Box>
                 </Box>
               </Box>
@@ -141,11 +125,11 @@ const ChatContent = (props: ChatContentType) => {
               </Box>
             </Box>
 
-            {/* {selectedChat && store.userProfile ? (
-              <ChatLog hidden={hidden} data={{ ...selectedChat, userContact: store.userProfile }} />
-            ) : null} */}
+            {selectedChat && auth.user ? (
+              <ChatLog data={{ ...selectedChat }} />
+            ) : null}
 
-            {/* <SendMsgForm store={store} dispatch={dispatch} sendMsg={sendMsg} /> */}
+            <SendMsgForm store={store} dispatch={dispatch} />
           </Box>
         )
       }

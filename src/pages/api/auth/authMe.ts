@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken'
 import prisma from '@/lib/prisma'
 
 const jwtConfig = {
-    accessTokenSecret: process.env.NEXT_PUBLIC_JWT_ACCESS_TOKEN_SECRET as string,
-    refreshTokenSecret: process.env.NEXT_PUBLIC_JWT_REFRESH_TOKEN_SECRET as string
+    accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET as string,
+    
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -2,16 +2,18 @@
 import React, { ChangeEvent, useEffect, useState, } from 'react'
 
 // ** MUI Components
-import { Avatar, Badge, Box, Chip, Drawer, InputAdornment, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, TextField, Typography } from '@mui/material'
+import { IconButton, Avatar, Badge, Box, Drawer, InputAdornment, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, TextField, Typography } from '@mui/material'
 import MuiAvatar from '@mui/material/Avatar'
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import Icon from '@/src/components/icon'
 
 // ** Types
-import { ChatSidebarLeftType, ChatsArrType, ContactType, statusObj } from '@/src/types/chatTypes'
-import Icon from '@/src/components/icon'
+import { ChatSidebarLeftType, ChatsArrType, FriendType } from '@/src/types/chatTypes'
 import { useAuth } from '@/src/hooks/useAuth'
-import { formatDateToMonthShort, getInitials } from '@/lib/utils'
-import { fetchRoom } from '@/src/store/chat'
+import { getInitials } from '@/lib/utils'
+import { selectChat } from '@/src/store/chat'
+import AddChatDialog from './AddChatDialog'
+import UserProfileBar from './UserProfileBar'
 
 
 const SideBarLeft = (props: ChatSidebarLeftType) => {
@@ -20,34 +22,24 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
     store,
     dispatch,
     sidebarWidth,
-    userStatus,
-    leftSidebarOpen,
-    handleLeftSidebarToggle,
     removeSelectedChat
   } = props
 
   // ** States
   const [query, setQuery] = useState<string>('')
   const [filteredChat, setFilteredChat] = useState<ChatsArrType[]>([])
-  const [filteredContacts, setFilteredContacts] = useState<ContactType[]>([])
+  const [filteredFriends, setFilteredFriends] = useState<FriendType[]>([])
+  const [addChatDialog, setAddChatDialog] = useState<boolean>(false)
+  const [userProfileBarOpen, setUserProfileBarOpen] = useState<boolean>(false)
   const [active, setActive] = useState<null | { type: string; id: string | number }>(null)
 
   // ** Hooks
   const auth = useAuth()
 
+  const handleAddChatDialogToogle = () => setAddChatDialog(!addChatDialog)
+  const handleUserProfileBarToggle = () => setUserProfileBarOpen(!userProfileBarOpen)
 
   useEffect(() => {
-    if (store && store.chats) {
-      if (active !== null) {
-        if (active.type === 'contact' && active.id === store.chats[0].id) {
-          setActive({ type: 'chat', id: active.id })
-        }
-      }
-    }
-  }, [store, active])
-
-  useEffect(() => {
-    dispatch(fetchRoom())
 
     return () => {
       setActive(null)
@@ -56,25 +48,42 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleChatClick = (type: 'chat' | 'contact', id: number) => {
-    //dispatch(selectChat(id))
+  const handleChatClick = (type: 'chat' | 'friend', id: number) => {
+    auth.user?.id && dispatch(selectChat({ id, userId: auth.user?.id }))
     setActive({ type, id })
-    handleLeftSidebarToggle();
+  }
+
+  useEffect(() => {
+    if (store && store.chats) {
+      if (active !== null) {
+        if (active.type === 'Friend' && active.id === store.chats[0].id) {
+          setActive({ type: 'chat', id: active.id })
+        }
+      }
+    }
+  }, [store, active])
+
+
+  const hasActiveId = (id: number | string) => {
+    if (store.chats !== null) {
+      const arr = store.chats.filter(i => i.id === id)
+
+      return !!arr.length
+    }
   }
 
   const handleFilter = (e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value)
-    if (store.chats !== null && store.contacts !== null) {
-      const searchFilterFunction = (contact: ChatsArrType | ContactType) =>
-        contact.name.toLowerCase().includes(e.target.value.toLowerCase())
+    if (store.chats !== null && store.friends !== null) {
+      const searchFilterFunction = (friend: ChatsArrType | FriendType) =>
+        friend.name.toLowerCase().includes(e.target.value.toLowerCase())
       const filteredChatsArr = store.chats.filter(searchFilterFunction)
-      const filteredContactsArr = store.contacts.filter(searchFilterFunction)
+      const filteredFriendsArr = store.friends.filter(searchFilterFunction)
       setFilteredChat(filteredChatsArr)
-      setFilteredContacts(filteredContactsArr)
+      setFilteredFriends(filteredFriendsArr)
     }
   }
 
-  
   const renderChats = () => {
     if (store && store.chats && store.chats.length) {
       if (query.length && !filteredChat.length) {
@@ -87,8 +96,6 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
         const arrToMap = query.length && filteredChat.length ? filteredChat : store.chats
 
         return arrToMap.map((chat: ChatsArrType, index: number) => {
-          const { lastMessage } = chat.chat
-          const activeCondition = active !== null && active.id === chat.id && active.type === 'chat'
 
           return (
             <ListItem key={index} disablePadding sx={{ '&:not(:last-child)': { mb: 1.5 } }}>
@@ -100,33 +107,11 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
                   py: 2.5,
                   width: '100%',
                   borderRadius: 1,
-                  alignItems: 'flex-start',
-                  ...(activeCondition && { backgroundColor: theme => `${theme.palette.primary.main} !important` })
+                  alignItems: 'flex-start'
                 }}
               >
                 <ListItemAvatar sx={{ m: 0 }}>
                   <Badge
-                    overlap='circular'
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right'
-                    }}
-                    badgeContent={
-                      <Box
-                        component='span'
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          color: `${statusObj[chat.status]}.main`,
-                          backgroundColor: `${statusObj[chat.status]}.main`,
-                          boxShadow: theme =>
-                            `0 0 0 2px ${
-                              !activeCondition ? theme.palette.background.paper : theme.palette.common.white
-                            }`
-                        }}
-                      />
-                    }
                   >
                     {chat.avatar ? (
                       <MuiAvatar
@@ -135,7 +120,7 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
                         sx={{
                           width: 40,
                           height: 40,
-                          outline: theme => `2px solid ${activeCondition ? theme.palette.common.white : 'transparent'}`
+                          outline: 'transparent'
                         }}
                       />
                     ) : (
@@ -150,44 +135,13 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
                     my: 0,
                     ml: 4,
                     mr: 1.5,
-                    '& .MuiTypography-root': { ...(activeCondition && { color: 'common.white' }) }
                   }}
                   primary={
-                    <Typography noWrap sx={{ ...(!activeCondition ? { color: 'text.secondary' } : {}) }}>
+                    <Typography noWrap sx={{ color: 'text.secondary' }}>
                       {chat.name}
                     </Typography>
                   }
-                  secondary={
-                    <Typography noWrap variant='body2' sx={{ ...(!activeCondition && { color: 'text.disabled' }) }}>
-                      {lastMessage ? lastMessage.message : null}
-                    </Typography>
-                  }
                 />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start'
-                  }}
-                >
-                  <Typography sx={{ whiteSpace: 'nowrap', color: activeCondition ? 'common.white' : 'text.disabled' }}>
-                    <>{lastMessage ? formatDateToMonthShort(lastMessage.time as string, true) : new Date()}</>
-                  </Typography>
-                  {chat.chat.unseenMsgs && chat.chat.unseenMsgs > 0 ? (
-                    <Chip
-                      color='error'
-                      label={chat.chat.unseenMsgs}
-                      sx={{
-                        mt: 0.5,
-                        height: 18,
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                        '& .MuiChip-label': { pt: 0.25, px: 1.655 }
-                      }}
-                    />
-                  ) : null}
-                </Box>
               </ListItemButton>
             </ListItem>
           )
@@ -196,11 +150,77 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
     }
   }
 
+  const renderFriends = () => {
+    if (store && store.friends && store.friends.length) {
+      if (query.length && !filteredFriends.length) {
+        return (
+          <ListItem>
+            <Typography sx={{ color: 'text.secondary' }}>No Friends Found</Typography>
+          </ListItem>
+        )
+      } else {
+        const arrToMap = query.length && filteredFriends.length ? filteredFriends : store.friends
+
+        return arrToMap !== null
+          ? arrToMap.map((friend: FriendType, index: number) => {
+            const activeCondition =
+              active !== null && active.id === friend.id && active.type === 'friend' && !hasActiveId(friend.id)
+
+            return (
+              <ListItem key={index} disablePadding sx={{ '&:not(:last-child)': { mb: 1.5 } }}>
+                <ListItemButton
+                  disableRipple
+                  onClick={() => handleChatClick(hasActiveId(friend.id) ? 'chat' : 'friend', friend.id)}
+                  sx={{
+                    px: 2.5,
+                    py: 2.5,
+                    width: '100%',
+                    borderRadius: 1,
+                    ...(activeCondition && { backgroundColor: theme => `${theme.palette.primary.main} !important` })
+                  }}
+                >
+                  <ListItemAvatar sx={{ m: 0 }}>
+                    {friend.avatar ? (
+                      <MuiAvatar
+                        alt={friend.name}
+                        src={friend.avatar}
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          outline: theme =>
+                            `2px solid ${activeCondition ? theme.palette.common.white : 'transparent'}`
+                        }}
+                      />
+                    ) : (
+                      <Avatar>
+                        {getInitials(friend.name)}
+                      </Avatar>
+                    )}
+                  </ListItemAvatar>
+                  <ListItemText
+                    sx={{
+                      my: 0,
+                      ml: 4,
+                      ...(activeCondition && { '& .MuiTypography-root': { color: 'common.white' } })
+                    }}
+                    primary={
+                      <Typography sx={{ ...(!activeCondition ? { color: 'text.secondary' } : {}) }}>
+                        {friend.name}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )
+          })
+          : null
+      }
+    }
+  }
+
   return (
     <div>
       <Drawer
-        open={leftSidebarOpen}
-        onClose={handleLeftSidebarToggle}
         variant={'permanent'}
         ModalProps={{
           disablePortal: true,
@@ -243,19 +263,7 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
                 horizontal: 'right'
               }}
               sx={{ mr: 4.5 }}
-              badgeContent={
-                <Box
-                  component='span'
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    color: `${statusObj[userStatus]}.main`,
-                    backgroundColor: `${statusObj[userStatus]}.main`,
-                    boxShadow: theme => `0 0 0 2px ${theme.palette.background.paper}`
-                  }}
-                />
-              }
+              onClick={handleUserProfileBarToggle}
             >
               <MuiAvatar
                 src={auth.user.avatar}
@@ -279,6 +287,9 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
               )
             }}
           />
+          <IconButton onClick={handleAddChatDialogToogle}>
+            <Icon icon='material-symbols:group-add' fontSize='1.25rem' />
+          </IconButton>
         </Box>
         <Box sx={{ height: `calc(100% - 4.125rem)` }}>
           <PerfectScrollbar options={{ wheelPropagation: false }}>
@@ -287,9 +298,19 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
                 Chats
               </Typography>
               <List sx={{ mb: 7.5, p: 0 }}>{renderChats()}</List>
+              <Typography variant='h6' sx={{ ml: 2, mb: 4, color: 'primary.main' }}>
+                Friends
+              </Typography>
+              <List sx={{ p: 0 }}>{renderFriends()}</List>
             </Box>
           </PerfectScrollbar>
         </Box>
+        <AddChatDialog open={addChatDialog} toggle={handleAddChatDialogToogle} />
+        <UserProfileBar
+          sidebarWidth={sidebarWidth}
+          userProfileBarOpen={userProfileBarOpen}
+          handleUserProfileBarToggle={handleUserProfileBarToggle}
+        />
       </Drawer>
     </div>
   )

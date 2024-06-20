@@ -1,43 +1,23 @@
 // ** Types
 import { Dispatch } from 'redux'
 
-export type StatusType = 'busy' | 'away' | 'online' | 'offline'
-
-export const statusObj = {
-  busy: 'error',
-  away: 'warning',
-  online: 'success',
-  offline: 'secondary'
-}
-
-
-
-export type MsgFeedbackType = {
-  isSent: boolean
-  isSeen: boolean
-  isDelivered: boolean
-}
-
 export type ChatType = {
   message: string
   senderId: number
   time: Date | string
-  feedback: MsgFeedbackType
 }
 
 export type ChatsObj = {
   id: number
   userId: number
-  chat: ChatType[]
-  unseenMsgs: number
+  messages: ChatType[]
   lastMessage?: ChatType
 }
 
-export type ContactType = {
+export type FriendType = {
   id: number
   avatar?: string
   name: string
-  status: StatusType
 }
 
 export type ChatsArrType = {
@@ -45,24 +25,23 @@ export type ChatsArrType = {
   chat: ChatsObj
   avatar?: string
   name: string
-  status: StatusType
 }
 
 export type SelectedChatType = null | {
   chat: ChatsObj
-  contact: ChatsArrType
+  friend: ChatsArrType
 }
 
 export type ChatStoreType = {
   chats: ChatsArrType[] | null
-  contacts: ContactType[] | null
+  friends: FriendType[] | null
   selectedChat: SelectedChatType
 }
 
 export type SendMsgParamsType = {
-  chat?: ChatsObj
+  chatId: number
   message: string
-  contact?: ChatsArrType
+  senderId: number
 }
 
 export type ChatContentType = {
@@ -74,10 +53,45 @@ export type ChatContentType = {
 export type ChatSidebarLeftType = {
   store: ChatStoreType
   sidebarWidth: number
-  userStatus: StatusType
   dispatch: Dispatch<any>
-  leftSidebarOpen: boolean
   removeSelectedChat: () => void
-  handleLeftSidebarToggle: () => void
 }
 
+export type UserProfileBarType = {
+  sidebarWidth: number
+  userProfileBarOpen: boolean
+  handleUserProfileBarToggle: () => void
+}
+
+export type SendMsgComponentType = {
+  store: ChatStoreType
+  dispatch: Dispatch<any>
+}
+
+export type ChatLogType = {
+  data: {
+    chat: ChatsObj
+    friend: FriendType
+  }
+}
+
+export type MessageType = {
+  time: string | Date
+  message: string
+  senderId: number
+}
+
+export type ChatLogChatType = {
+  msg: string
+  time: string | Date
+}
+
+export type FormattedChatsType = {
+  senderId: number
+  messages: ChatLogChatType[]
+}
+
+export type MessageGroupType = {
+  senderId: number
+  messages: ChatLogChatType[]
+}

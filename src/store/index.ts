@@ -3,11 +3,15 @@ import { configureStore } from '@reduxjs/toolkit'
 
 // ** Reducers
 import chat from './chat'
+import friendship from './friendship'
+import user from './user'
 
 
 export const store = configureStore({
   reducer: {
-    chat
+    chat,
+    friendship,
+    user
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

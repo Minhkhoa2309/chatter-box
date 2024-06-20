@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 
 // ** MUI Components
 import { Box } from '@mui/material'
@@ -10,24 +10,26 @@ import ChatContent from '@/src/views/chat/ChatContent'
 // ** Redux
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/src/store'
+import { useAuth } from '@/src/hooks/useAuth'
 
 // ** Type
-import { StatusType } from '@/src/types/chatTypes'
-import { removeSelectedChat } from '@/src/store/chat'
+import { fetchChatsAndFriend, removeSelectedChat } from '@/src/store/chat'
 
 const ChatScreen = () => {
-    // ** States
-    const [userStatus, setUserStatus] = useState<StatusType>('online')
-    const [leftSidebarOpen, setLeftSidebarOpen] = useState<boolean>(false)
     // ** Hooks
     const theme = useTheme();
     const dispatch = useDispatch<AppDispatch>()
     const store = useSelector((state: RootState) => state.chat)
+    const auth = useAuth()
 
     // ** Vars
     const sidebarWidth = 370
 
-    const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
+    useEffect(() => {
+        if (auth.user?.id) {
+            dispatch(fetchChatsAndFriend(auth.user?.id))
+        }
+    }, [dispatch])
 
     return (
         <Box
@@ -48,9 +50,6 @@ const ChatScreen = () => {
                 store={store}
                 dispatch={dispatch}
                 sidebarWidth={sidebarWidth}
-                userStatus={userStatus}
-                leftSidebarOpen={leftSidebarOpen}
-                handleLeftSidebarToggle={handleLeftSidebarToggle}
                 removeSelectedChat={removeSelectedChat}
             />
             <ChatContent
