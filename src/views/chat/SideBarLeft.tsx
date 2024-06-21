@@ -4,7 +4,6 @@ import React, { ChangeEvent, useEffect, useState, } from 'react'
 // ** MUI Components
 import { IconButton, Avatar, Badge, Box, Drawer, InputAdornment, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, TextField, Typography } from '@mui/material'
 import MuiAvatar from '@mui/material/Avatar'
-import PerfectScrollbar from 'react-perfect-scrollbar'
 import Icon from '@/src/components/icon'
 
 // ** Types
@@ -45,6 +44,7 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
       setActive(null)
       dispatch(removeSelectedChat())
     }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -292,7 +292,7 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
           </IconButton>
         </Box>
         <Box sx={{ height: `calc(100% - 4.125rem)` }}>
-          <PerfectScrollbar options={{ wheelPropagation: false }}>
+          <Box sx={{ height: '100%', overflow: 'auto' }}>
             <Box sx={{ p: theme => theme.spacing(5, 3, 3) }}>
               <Typography variant='h6' sx={{ ml: 2, mb: 4, color: 'primary.main' }}>
                 Chats
@@ -303,7 +303,7 @@ const SideBarLeft = (props: ChatSidebarLeftType) => {
               </Typography>
               <List sx={{ p: 0 }}>{renderFriends()}</List>
             </Box>
-          </PerfectScrollbar>
+          </Box>
         </Box>
         <AddChatDialog open={addChatDialog} toggle={handleAddChatDialogToogle} />
         <UserProfileBar

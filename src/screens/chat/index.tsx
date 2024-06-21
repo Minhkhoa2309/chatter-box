@@ -55,7 +55,6 @@ const ChatScreen = () => {
             <ChatContent
                 store={store}
                 dispatch={dispatch}
-                sidebarWidth={sidebarWidth}
             />
         </Box>
     )

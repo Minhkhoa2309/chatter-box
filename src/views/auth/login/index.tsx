@@ -1,6 +1,6 @@
 'use client'
 // ** React Imports
-import React, { useState, MouseEvent } from 'react'
+import React, { useState } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'

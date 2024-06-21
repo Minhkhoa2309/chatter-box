@@ -16,7 +16,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks Import
 import { useAuth } from '../../../hooks/useAuth'
-import axios from 'axios'
 
 const schema = yup.object().shape({
     email: yup.string().email().required(),

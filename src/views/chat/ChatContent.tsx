@@ -4,7 +4,7 @@ import { ChatContentType } from '@/src/types/chatTypes'
 import MuiAvatar from '@mui/material/Avatar'
 import { Avatar, Badge, Box, Typography, IconButton } from '@mui/material'
 import Icon from '@/src/components/icon'
-import { formatDateToMonthShort, getInitials } from '@/lib/utils'
+import { getInitials } from '@/lib/utils'
 import { useAuth } from '@/src/hooks/useAuth'
 import ChatLog from './ChatLog'
 import SendMsgForm from './SendMsgForm'
@@ -13,8 +13,7 @@ const ChatContent = (props: ChatContentType) => {
   // ** Props
   const {
     store,
-    dispatch,
-    sidebarWidth
+    dispatch
   } = props
 
   // ** Hooks
@@ -24,7 +23,6 @@ const ChatContent = (props: ChatContentType) => {
   const renderContent = () => {
     if (store) {
       const selectedChat = store.selectedChat
-
 
       if (!selectedChat) {
         return (

@@ -7,8 +7,6 @@ import axios from 'axios'
 // ** Fetch Users by Email
 export const getUserByEmail = createAsyncThunk('appUsers/getUsersByEmail', async (email: string) => {
   const response = await axios.get(`/api/user/getUserByEmail?email=${encodeURIComponent(email)}`)
-  console.log(response);
-
 
   return response.data
 })

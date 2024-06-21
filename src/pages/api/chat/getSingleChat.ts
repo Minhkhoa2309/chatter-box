@@ -35,7 +35,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             avatar: ''
         } : chat.users.find(userChat => userChat.userId !== Number(userId))?.user;
 
-
         res.status(200).json({ chat, friend: otherUser })
     } catch (error) {
         console.error('Error fetching single chat:', error)

@@ -8,8 +8,6 @@ import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import Box, { BoxProps } from '@mui/material/Box'
 
-// ** Icon Imports
-
 // ** Types
 import { SendMsgComponentType } from '@/src/types/chatTypes'
 import Icon from '@/src/components/icon'

@@ -1,13 +1,9 @@
 // ** React Imports
-import { useRef, useEffect, Ref } from 'react'
+import { useRef, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
-
-// ** Third Party Components
-import PerfectScrollbarComponent, { ScrollBarProps } from 'react-perfect-scrollbar'
 
 
 // ** Types Imports
@@ -21,10 +17,6 @@ import {
 import { useAuth } from '@/src/hooks/useAuth'
 import { getInitials } from '@/lib/utils'
 import { Avatar } from '@mui/material'
-
-const PerfectScrollbar = styled(PerfectScrollbarComponent)<ScrollBarProps & { ref: Ref<unknown> }>(({ theme }) => ({
-    padding: theme.spacing(5)
-}))
 
 const ChatLog = (props: ChatLogType) => {
     // ** Props
@@ -40,7 +32,7 @@ const ChatLog = (props: ChatLogType) => {
     const scrollToBottom = () => {
         if (chatArea.current) {
             // @ts-ignore
-            chatArea.current._container.scrollTop = chatArea.current._container.scrollHeight
+            chatArea.current.scrollTop = chatArea.current.scrollHeight
         }
     }
 
@@ -50,7 +42,7 @@ const ChatLog = (props: ChatLogType) => {
         if (data.chat) {
             chatLog = data.chat.messages
         }
-        
+
         const formattedChatLog: FormattedChatsType[] = []
         let chatMessageSenderId = chatLog[0] ? chatLog[0].senderId : 11
         let msgGroup: MessageGroupType = {
@@ -89,13 +81,15 @@ const ChatLog = (props: ChatLogType) => {
         if (data && data.chat && data.chat.messages.length) {
             scrollToBottom()
         }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data])
 
     // ** Renders user chat
     const renderChats = () => {
         return formattedChatData().map((item: FormattedChatsType, index: number) => {
-            const isSender = item.senderId === auth.user?.id
+            const isSender = item.senderId === auth.user?.id;
+            let senderInfo = data.chat.users.find(user => user.userId === item.senderId)?.user
 
             return (
                 <Box
@@ -115,18 +109,13 @@ const ChatLog = (props: ChatLogType) => {
                                 ml: isSender ? 4 : undefined,
                                 mr: !isSender ? 4 : undefined
                             }}
-                            {...(data.friend.avatar && !isSender
+                            {...(senderInfo && senderInfo.avatar
                                 ? {
-                                    src: data.friend.avatar,
-                                    alt: data.friend.name
+                                    src: senderInfo.avatar,
+                                    alt: senderInfo.name
                                 }
                                 : {})}
-                            {...(isSender
-                                ? {
-                                    src: auth.user?.avatar,
-                                    alt: auth.user?.name
-                                }
-                                : {})}
+                    
                         >
                             {getInitials(data.friend.name)}
                         </Avatar>
@@ -169,7 +158,7 @@ const ChatLog = (props: ChatLogType) => {
                                         >
                                             <Typography variant='caption' sx={{ color: 'text.disabled' }}>
                                                 {time
-                                                    ? new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+                                                    ? new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, day: 'numeric', month: 'numeric', year: 'numeric' })
                                                     : null}
                                             </Typography>
                                         </Box>
@@ -184,10 +173,10 @@ const ChatLog = (props: ChatLogType) => {
     }
 
     return (
-        <Box sx={{ height: 'calc(100% - 8.4375rem)' }}>
-            <PerfectScrollbar ref={chatArea} options={{ wheelPropagation: false }}>
+        <Box sx={{ height: 'calc(100% - 10rem)' }}>
+            <Box ref={chatArea} sx={{ p: 5, height: '80%', overflowY: 'auto', overflowX: 'hidden' }}>
                 {renderChats()}
-            </PerfectScrollbar>
+            </Box>
         </Box>
     )
 }

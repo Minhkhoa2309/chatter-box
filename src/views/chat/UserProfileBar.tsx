@@ -17,9 +17,6 @@ import ListItemButton from '@mui/material/ListItemButton'
 // ** Icon Imports
 import Icon from '@/src/components/icon'
 
-// ** Third Party Components
-import PerfectScrollbar from 'react-perfect-scrollbar'
-
 // ** Custom Component Imports
 import Sidebar from '@/src/components/sidebar'
 
@@ -92,7 +89,7 @@ const UserProfileBar = (props: UserProfileBarType) => {
           </Box>
 
           <Box sx={{ height: 'calc(100% - 13.375rem)' }}>
-            <PerfectScrollbar options={{ wheelPropagation: false }}>
+            <Box sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
               <Box sx={{ p: 5 }}>
                 <List dense sx={{ p: 0, mb: 6 }}>
                   <ListItem disablePadding>
@@ -106,7 +103,7 @@ const UserProfileBar = (props: UserProfileBarType) => {
                 </List>
                 <Button variant='contained' onClick={() => auth.logout()}>Logout</Button>
               </Box>
-            </PerfectScrollbar>
+            </Box>
           </Box>
         </Fragment>
       ) : null}

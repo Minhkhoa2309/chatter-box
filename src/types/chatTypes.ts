@@ -1,5 +1,6 @@
 // ** Types
 import { Dispatch } from 'redux'
+import { UserDataType } from '../context/types'
 
 export type ChatType = {
   message: string
@@ -7,9 +8,15 @@ export type ChatType = {
   time: Date | string
 }
 
+export type ChatUser = {
+  userId: number
+  chatId: number
+  user: UserDataType
+}
+
 export type ChatsObj = {
   id: number
-  userId: number
+  users: ChatUser[]
   messages: ChatType[]
   lastMessage?: ChatType
 }
@@ -46,7 +53,6 @@ export type SendMsgParamsType = {
 
 export type ChatContentType = {
   store: ChatStoreType
-  sidebarWidth: number
   dispatch: Dispatch<any>
 }
 

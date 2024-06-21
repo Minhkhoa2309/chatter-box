@@ -1,5 +1,5 @@
 // ** React Imports
-import { Ref, useState, forwardRef, ReactElement } from 'react'
+import { Ref, forwardRef, ReactElement } from 'react'
 
 // ** Redux
 import { useDispatch, useSelector } from 'react-redux'
@@ -60,14 +60,12 @@ const AddFriendDialog = (props: AddFriendDialogType) => {
 
     // ** Hooks
     const dispatch = useDispatch<AppDispatch>()
-    const store = useSelector((state: RootState) => state.friendship)
     const auth = useAuth()
 
 
     const {
         reset,
         control,
-        setValue,
         setError,
         handleSubmit,
         formState: { errors }
